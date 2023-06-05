@@ -8,10 +8,10 @@ const Comment = require("../models/Comment.model")
 router.post("/create", isAuthenticated, async (req,res,next) => {
     const userId  = req.payload._id
 
-    const { seed, flip, rotate, scale, radius, size, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, randomizeIds, accessories, accessoriesColor, accessoriesProbability, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, facialHairProbability, hairColor, hatColor, mouth, nose, skinColor, style, top, topProbability, likes } = req.body
+    const { seed, flip, rotate, scale, radius, size, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, randomizeIds, accessories, accessoriesColor, accessoriesProbability, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, facialHairProbability, hairColor, hatColor, mouth, nose, skinColor, style, top, topProbability, likes, name, json } = req.body
     try {
         await Avatar.create({
-            seed, flip, rotate, scale, radius, size, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, randomizeIds, accessories, accessoriesColor, accessoriesProbability, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, facialHairProbability, hairColor, hatColor, mouth, nose, skinColor, style, top, topProbability, owner: userId , likes
+            seed, flip, rotate, scale, radius, size, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, randomizeIds, accessories, accessoriesColor, accessoriesProbability, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, facialHairProbability, hairColor, hatColor, mouth, nose, skinColor, style, top, topProbability, owner: userId , likes, name, json
         })
         res.json("avatar creado !")
 
@@ -27,7 +27,11 @@ router.get("/:avatarId", isAuthenticated, async (req,res,next) => {
     try {
         const avatarParams = await Avatar.findById(avatarId)
         const allComents = await Comment({avatar: avatarParams._id}).populate("author","username")
-        res.json(avatarParams, allComents)
+        const avatarData = {
+            avatar: avatarParams,
+            comment: allComents,
+          };
+        res.json(avatarData)
     } catch (err) {
         next(err)
     }
@@ -37,10 +41,10 @@ router.get("/:avatarId", isAuthenticated, async (req,res,next) => {
 
 router.put("/:avatarId", isAuthenticated, async (req,res,next) => {
     const {avatarId} = req.params
-    const { seed, flip, rotate, scale, radius, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, accessories, accessoriesColor, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, hairColor, hatColor, mouth, nose, skinColor, style, top } = req.body
+    const { seed, flip, rotate, scale, radius, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, accessories, accessoriesColor, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, hairColor, hatColor, mouth, nose, skinColor, style, top, name, json } = req.body
     try {
         await Avatar.findByIdAndUpdate(avatarId, {
-            seed, flip, rotate, scale, radius, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, accessories, accessoriesColor, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, hairColor, hatColor, mouth, nose, skinColor, style, top
+            seed, flip, rotate, scale, radius, backgroundColor, backgroundType, backgroundRotation, translateX, translateY, clip, accessories, accessoriesColor, base, clothesColor, clothing, clothingGraphic, eyebrows, eyes, facialHair, facialHairColor, hairColor, hatColor, mouth, nose, skinColor, style, top, name, json
         })
         res.json("avatar actualizado !")
     } catch (err) {

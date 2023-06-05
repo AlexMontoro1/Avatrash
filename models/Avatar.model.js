@@ -115,7 +115,11 @@ const avatarSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "User"
   },
-  likes: Number
+  likes: Number,
+  name: String,
+  json: {
+    svg: String
+  }
 },
 {   
   timestamps: true

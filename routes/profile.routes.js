@@ -8,9 +8,11 @@ const Avatar = require("../models/Avatar.model");
 // GET "/profile/main" gets the user profile
 
 router.get("/main", isAuthenticated, async (req,res,next)=> {
-  const  userId  = req.payload._id
+  const userId = req.payload._id
+  console.log(userId)
     try {
         const findUser = await User.findById(userId)
+        console.log(findUser)
         const userAvatars = await Avatar.find({owner: userId})
         const userData = {
           user: findUser,
