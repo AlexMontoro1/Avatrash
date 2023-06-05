@@ -48,6 +48,18 @@ router.put("/:avatarId", isAuthenticated, async (req,res,next) => {
     }
 })
 
+// DELETE "/avatar/:avatarId" delete avatar with this ID
+
+router.delete("/:avatarId", isAuthenticated, async (req,res,next) => {
+    const {avatarId} = req.params
+    try {
+        await Avatar.findByIdAndDelete(avatarId)
+        res.json("Avatar borrado !")
+    } catch (err) {
+        next(err)
+    }
+})
+
 // POST "/avatar/:avatarId/comment" create a new comment on avatar details page
 
 router.post("/:avatarId/comment", isAuthenticated, async (req,res,next) => {
@@ -69,6 +81,32 @@ router.post("/:avatarId/comment", isAuthenticated, async (req,res,next) => {
 
 })
 
+// DELETE "/avatar/:avatarId/comment" delete a comment from the owner
+
+router.delete("/:avatarId/comment/:commentId", isAuthenticated, async (req,res,next) => {
+    const userId = req.payload._id;
+  const { commentId } = req.params;
+
+  try {
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comentario no encontrado" });
+    }
+
+    // Verificar si el usuario autenticado es el propietario del comentario
+    if (comment.author.toString() !== userId) {
+      return res.status(403).json({ message: "Acceso no autorizado" });
+    }
+
+    // El usuario está autorizado, eliminar el comentario
+    await Comment.findByIdAndDelete(commentId);
+
+    res.json({ message: "Comentario eliminado" });
+  } catch (err) {
+    next(err);
+  }
+})
 
 
 

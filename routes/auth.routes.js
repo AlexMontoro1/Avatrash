@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require ("jsonwebtoken")
 const isAuthenticated = require("../middlewares/isAuthenticated.js")
+const { sendEmail } = require("../utils/emailService.js");
 
 const User = require("../models/User.model");
 
@@ -46,7 +47,9 @@ router.post("/signin", async (req, res, next) => {
       email,
       password: encryptedPassword,
     });
-
+    const subject = "Bienvenido a nuestra aplicación";
+    const text = "Gracias por registrarte en nuestra aplicación. ¡Disfruta tu experiencia!";
+    await sendEmail(email, subject, text);
     res.json("User created !");
   } catch (err) {
     next(err);
@@ -90,5 +93,6 @@ router.post("/login", async (req, res, next) => {
 router.get("/verify", isAuthenticated, async (req,res,next)=> {
     res.json({ payload: req.payload })
 })
+
 
 module.exports = router;

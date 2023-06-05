@@ -2,14 +2,21 @@ const User = require("../models/User.model");
 const { passValidation, emailValidation } = require("../utils/verification.js");
 const bcrypt = require("bcryptjs");
 const router = require("express").Router();
-const isAuthenticated = require("../middlewares/isAuthenticated.js")
+const isAuthenticated = require("../middlewares/isAuthenticated.js");
+const Avatar = require("../models/Avatar.model");
 
 // GET "/profile/main" gets the user profile
 
 router.get("/main", isAuthenticated, async (req,res,next)=> {
+  const  userId  = req.payload._id
     try {
-        const response = await User.find().select({username: 1, email: 1})
-        res.json(response)
+        const findUser = await User.findById(userId)
+        const userAvatars = await Avatar.find({owner: userId})
+        const userData = {
+          user: findUser,
+          avatars: userAvatars,
+        };
+        res.json(userData)
     } catch (err) {
         next(err)
     }
