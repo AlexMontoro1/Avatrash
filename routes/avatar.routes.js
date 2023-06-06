@@ -3,6 +3,15 @@ const isAuthenticated = require("../middlewares/isAuthenticated.js")
 const router = require("express").Router();
 const Comment = require("../models/Comment.model")
 
+router.get("/", async (req,res,next)=> {
+    try {
+        const response = await Avatar.find()
+        res.json(response)
+    } catch (err) {
+        next(err)
+    }
+})
+
 // POST "/avatar/create" create a new avatar
 
 router.post("/create", isAuthenticated, async (req,res,next) => {
@@ -22,11 +31,11 @@ router.post("/create", isAuthenticated, async (req,res,next) => {
 
 // GET "/avatar/:avatarId" details of an avatar
 
-router.get("/:avatarId", isAuthenticated, async (req,res,next) => {
+router.get("/:avatarId", async (req,res,next) => {
     const {avatarId} = req.params
     try {
         const avatarParams = await Avatar.findById(avatarId)
-        const allComents = await Comment({avatar: avatarParams._id}).populate("author","username")
+        const allComents = await Comment.find({avatar: avatarParams._id}).populate("author","username")
         const avatarData = {
             avatar: avatarParams,
             comment: allComents,
