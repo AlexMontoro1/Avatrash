@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const router = require("express").Router();
 const isAuthenticated = require("../middlewares/isAuthenticated.js");
 const Avatar = require("../models/Avatar.model");
+const uploader = require("../middlewares/cloudinary.config")
 
 // GET "/profile/main" gets the user profile
 
@@ -14,6 +15,7 @@ router.get("/main", isAuthenticated, async (req,res,next)=> {
         const findUser = await User.findById(userId)
         console.log(findUser)
         const userAvatars = await Avatar.find({owner: userId})
+        await findUser.save();
         const userData = {
           user: findUser,
           avatars: userAvatars,
@@ -72,6 +74,33 @@ router.put("/edit", isAuthenticated, async (req,res,next)=> {
         next(err)
     }
 })
+
+router.put("/main",isAuthenticated, uploader.single("image"), async (req, res, next) => {
+  
+  try {
+    const  userId  = req.payload._id
+    const image = req.file;
+    const currentImage = req.body.currentImage;
+    console.log(currentImage);
+    let imageUrl = currentImage;
+    if (image) {
+      imageUrl = image.path;
+    }
+
+
+    
+
+    await User.findByIdAndUpdate(
+      userId,
+      { image: imageUrl },
+      { new: true }
+    );
+
+    res.json({ imageUrl });
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 

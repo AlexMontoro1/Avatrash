@@ -13,4 +13,7 @@ router.use("/profile", profileRouter)
 const avatarRouter = require("./avatar.routes.js")
 router.use("/avatar", avatarRouter)
 
+const adminRouter = require("./admin.routes.js")
+router.use("/admin", adminRouter)
+
 module.exports = router;

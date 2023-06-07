@@ -20,8 +20,8 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.']
     },
-    image : {
-      String
+    image: {
+      type: String 
     },
     likedAvatars:[{
       type: Schema.Types.ObjectId,
