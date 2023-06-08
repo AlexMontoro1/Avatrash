@@ -23,10 +23,6 @@ const userSchema = new Schema(
     image: {
       type: String 
     },
-    likedAvatars:[{
-      type: Schema.Types.ObjectId,
-      ref: "Avatar"
-    }],
     role:{
       type:String,
       enum: ["user", "admin"],

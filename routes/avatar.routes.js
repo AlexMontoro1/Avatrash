@@ -2,6 +2,7 @@ const Avatar = require("../models/Avatar.model");
 const isAuthenticated = require("../middlewares/isAuthenticated.js")
 const router = require("express").Router();
 const Comment = require("../models/Comment.model")
+const User = require("../models/User.model")
 
 router.get("/", async (req,res,next)=> {
     try {
@@ -121,6 +122,36 @@ router.delete("/:avatarId/comment/:commentId", isAuthenticated, async (req,res,n
   }
 })
 
+router.post("/:avatarId/like", isAuthenticated, async (req, res, next) => {
+    const { avatarId } = req.params;
+    const userId = req.payload._id;
+  
+    try {
+      const avatar = await Avatar.findById(avatarId);
+  
+      if (!avatar) {
+        return res.status(404).json({ message: 'Avatar not found' });
+      }
+  
+      if (avatar.likes.includes(userId)){
+        avatar.likes.pull(userId)
+      } else {
+        avatar.likes.push(userId)
+      }
+
+      await avatar.save(); // Guardar los cambios en el avatar
+      res.json( avatar.likes );
+    } catch (error) {
+      next(error)
+    }
+  });
+  
+  
+  
+  
+  
+  
+  
 
 
 
